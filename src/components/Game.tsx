@@ -23,7 +23,7 @@ import { EventPopup } from './EventPopup';
 import { SlowMoOverlay } from './SlowMoOverlay';
 import { PhaseTransitionBanner } from './PhaseTransitionBanner';
 import { DragOverlayContent } from './DragOverlayContent';
-import { playPop, playBuzz, playSparkle, playWhoosh, playAlarm } from '../utils/sound';
+import { playPop, playBuzz, playSparkle, playWhoosh, playAlarm, playDischarge } from '../utils/sound';
 
 export function Game() {
   useGameLoop();
@@ -44,6 +44,7 @@ export function Game() {
 
   const prevSlowMoActive = useRef(false);
   const prevEventCount = useRef(0);
+  const prevDischargeCount = useRef(0);
 
   useEffect(() => {
     if (slowMo.active && !prevSlowMoActive.current && soundEnabled) {
@@ -62,6 +63,14 @@ export function Game() {
     }
     prevEventCount.current = activeEvents.length;
   }, [activeEvents, soundEnabled]);
+
+  const dischargeCount = useGameStore((s) => s.stats.patientsDischarged);
+  useEffect(() => {
+    if (dischargeCount > prevDischargeCount.current && soundEnabled) {
+      playDischarge();
+    }
+    prevDischargeCount.current = dischargeCount;
+  }, [dischargeCount, soundEnabled]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

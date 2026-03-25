@@ -8,6 +8,7 @@ export function HUD() {
   const gameClock = useGameStore((s) => s.gameClock);
   const difficultyPhase = useGameStore((s) => s.difficultyPhase);
   const missCount = useGameStore((s) => s.stats.missCount);
+  const discharged = useGameStore((s) => s.stats.patientsDischarged);
   const slowMo = useGameStore((s) => s.slowMo);
   const soundEnabled = useGameStore((s) => s.soundEnabled);
   const toggleSound = useGameStore((s) => s.toggleSound);
@@ -76,6 +77,12 @@ export function HUD() {
 
       {/* Right: Controls */}
       <div className="flex items-center gap-4">
+        {/* Discharged */}
+        <div className="flex items-center gap-1 text-sm text-slate-500" title="Patients discharged">
+          <span className="text-base">🏠</span>
+          <span className="font-bold tabular-nums">{discharged}</span>
+        </div>
+
         {/* Misses */}
         <div className="flex gap-1">
           {Array.from({ length: MAX_MISSES }).map((_, i) => (

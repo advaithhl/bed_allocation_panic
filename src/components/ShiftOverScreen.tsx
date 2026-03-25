@@ -47,6 +47,7 @@ export function ShiftOverScreen() {
   const statItems = [
     { label: 'Final Score', value: score.toLocaleString(), big: true },
     { label: 'Patients Placed', value: `${stats.patientsPlaced} / ${stats.totalSpawned}` },
+    { label: 'Discharged', value: String(stats.patientsDischarged) },
     { label: 'Efficiency', value: `${stats.efficiency}%` },
     { label: 'Perfect Placements', value: String(stats.perfectPlacements) },
     { label: 'Best Combo', value: `x${stats.bestCombo}` },

@@ -20,6 +20,8 @@ import {
   SLOW_MO_COOLDOWN_MS,
   SLOW_MO_DURATION_MS,
   SLOW_MO_TIME_SCALE,
+  STAY_DURATION_MS,
+  PERFECT_STAY_MULTIPLIER,
 } from '../types/game';
 import { createRooms } from './roomSetup';
 import { generatePatient, resetPatientIdCounter } from './patientGenerator';
@@ -82,6 +84,7 @@ export interface GameState {
 
 const initialStats: GameStats = {
   patientsPlaced: 0,
+  patientsDischarged: 0,
   perfectPlacements: 0,
   bestCombo: 0,
   totalScore: 0,
@@ -175,9 +178,26 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
 
     // --- Re-enable disabled rooms ---
-    const rooms = state.rooms.map((room) => {
+    let rooms = state.rooms.map((room) => {
       if (room.disabled && newClock >= room.disabledUntilGameTime) {
         return { ...room, disabled: false, disabledUntilGameTime: 0 };
+      }
+      return room;
+    });
+
+    // --- Discharge patients whose stay has elapsed ---
+    let dischargeCount = 0;
+    rooms = rooms.map((room) => {
+      const before = room.occupants.length;
+      const remaining = room.occupants.filter((p) => {
+        if (p.dischargeAtGameTime > 0 && newClock >= p.dischargeAtGameTime) {
+          return false;
+        }
+        return true;
+      });
+      dischargeCount += before - remaining.length;
+      if (remaining.length !== before) {
+        return { ...room, occupants: remaining };
       }
       return room;
     });
@@ -263,6 +283,7 @@ export const useGameStore = create<GameState>((set, get) => ({
               newQueue = [...newQueue, ...evicted.map((p) => ({
                 ...p,
                 expiresAtGameTime: newClock + config.patientExpiryMs,
+                dischargeAtGameTime: 0,
               }))];
               return {
                 ...r,
@@ -304,7 +325,7 @@ export const useGameStore = create<GameState>((set, get) => ({
             } else {
               newQueue = [
                 ...newQueue,
-                { ...upgraded, expiresAtGameTime: newClock + config.patientExpiryMs },
+                { ...upgraded, expiresAtGameTime: newClock + config.patientExpiryMs, dischargeAtGameTime: 0 },
               ];
               return roomWithout;
             }
@@ -326,6 +347,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       ...state.stats,
       missCount,
       totalSpawned,
+      patientsDischarged: state.stats.patientsDischarged + dischargeCount,
       highestPhaseReached: newPhase,
       totalScore: state.score,
       efficiency:
@@ -379,9 +401,15 @@ export const useGameStore = create<GameState>((set, get) => ({
       state.combo,
     );
 
+    const stayMs = STAY_DURATION_MS[patient.careLevel] * (isPerfect ? PERFECT_STAY_MULTIPLIER : 1);
+    const placedPatient: Patient = {
+      ...patient,
+      dischargeAtGameTime: state.gameClock + stayMs,
+    };
+
     const newQueue = state.queue.filter((_, i) => i !== patientIdx);
     const newRooms = state.rooms.map((r) =>
-      r.id === roomId ? { ...r, occupants: [...r.occupants, patient] } : r,
+      r.id === roomId ? { ...r, occupants: [...r.occupants, placedPatient] } : r,
     );
 
     const newCombo = state.combo + 1;
@@ -420,6 +448,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const returnedPatient: Patient = {
       ...patient,
       expiresAtGameTime: state.gameClock + config.patientExpiryMs,
+      dischargeAtGameTime: 0,
     };
 
     set({

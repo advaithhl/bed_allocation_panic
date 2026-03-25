@@ -1,6 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { motion } from 'framer-motion';
 import type { Patient, DragData } from '../types/game';
+import { STAY_DURATION_MS } from '../types/game';
 import { useGameStore } from '../engine/gameStore';
 
 interface Props {
@@ -34,6 +35,12 @@ const EQUIP_ICONS: Record<string, string> = {
   intensive: '🏥',
 };
 
+const DISCHARGE_BAR_COLOR = {
+  low: 'bg-green-400',
+  medium: 'bg-amber-400',
+  high: 'bg-red-400',
+};
+
 export function PatientCard({ patient, source, compact }: Props) {
   const gameClock = useGameStore((s) => s.gameClock);
   const dragData: DragData = { patientId: patient.id, source };
@@ -53,25 +60,53 @@ export function PatientCard({ patient, source, compact }: Props) {
   const isUrgent = timeLeft < 5000;
 
   if (compact) {
+    const isPlaced = patient.dischargeAtGameTime > 0;
+    const maxStay = STAY_DURATION_MS[patient.careLevel];
+    const dischargeLeft = isPlaced
+      ? Math.max(0, patient.dischargeAtGameTime - gameClock)
+      : maxStay;
+    const dischargeFraction = isPlaced ? dischargeLeft / maxStay : 1;
+
     return (
-      <div
+      <motion.div
         ref={setNodeRef}
         style={style}
         {...attributes}
         {...listeners}
+        layout
+        layoutId={`room-${patient.id}`}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8, y: -8 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
         className={`
-          text-sm px-2.5 py-1.5 rounded-lg border-2 cursor-grab active:cursor-grabbing select-none
-          flex items-center gap-2
+          relative text-sm px-2.5 py-1.5 rounded-lg border-2 cursor-grab active:cursor-grabbing select-none
+          flex items-center gap-2 overflow-hidden
           ${CARE_COLORS[patient.careLevel]}
           ${isDragging ? 'opacity-40' : 'hover:shadow-sm'}
         `}
       >
         <span className="truncate flex-1 font-medium">{patient.name.split(' ').slice(0, 2).join(' ')}</span>
         <span className="text-base opacity-70">{GENDER_ICONS[patient.gender]}</span>
-        <span className={`text-xs font-mono tabular-nums ${isUrgent ? 'text-red-600 font-bold' : 'text-slate-400'}`}>
-          {timeLeftSec}s
-        </span>
-      </div>
+        {isPlaced ? (
+          <span className="text-xs font-mono tabular-nums text-slate-400">
+            {Math.ceil(dischargeLeft / 1000)}s
+          </span>
+        ) : (
+          <span className={`text-xs font-mono tabular-nums ${isUrgent ? 'text-red-600 font-bold' : 'text-slate-400'}`}>
+            {timeLeftSec}s
+          </span>
+        )}
+        {/* Discharge progress bar */}
+        {isPlaced && (
+          <div className="absolute bottom-0 left-0 right-0 h-1">
+            <div
+              className={`h-full transition-all duration-300 ${DISCHARGE_BAR_COLOR[patient.careLevel]}`}
+              style={{ width: `${Math.min(100, dischargeFraction * 100)}%` }}
+            />
+          </div>
+        )}
+      </motion.div>
     );
   }
 

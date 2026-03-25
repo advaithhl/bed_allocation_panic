@@ -114,6 +114,23 @@ export function playAlarm() {
   });
 }
 
+export function playDischarge() {
+  const ctx = getContext();
+  const now = ctx.currentTime;
+  [500, 700, 900].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now + i * 0.06);
+    gain.gain.setValueAtTime(0.08, now + i * 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.12);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + i * 0.06);
+    osc.stop(now + i * 0.06 + 0.12);
+  });
+}
+
 export function playChime() {
   playTone(1000, 0.2, 'sine', 0.12);
 }

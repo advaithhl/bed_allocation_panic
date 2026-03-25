@@ -50,5 +50,6 @@ export function generatePatient(
     spawnedAtGameTime: gameClock,
     expiresAtGameTime: gameClock + expiryMs,
     isEmergency,
+    dischargeAtGameTime: 0,
   };
 }

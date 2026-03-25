@@ -35,6 +35,7 @@ export interface Patient {
   spawnedAtGameTime: number;
   expiresAtGameTime: number;
   isEmergency: boolean;
+  dischargeAtGameTime: number;
 }
 
 export interface Room {
@@ -77,6 +78,7 @@ export interface SlowMoState {
 
 export interface GameStats {
   patientsPlaced: number;
+  patientsDischarged: number;
   perfectPlacements: number;
   bestCombo: number;
   totalScore: number;
@@ -170,3 +172,10 @@ export const SLOW_MO_COOLDOWN_MS = 10000;
 export const SLOW_MO_TIME_SCALE = 0.4;
 export const PERFECT_PLACEMENT_WINDOW_MS = 3000;
 export const COMBO_CAP = 5;
+
+export const STAY_DURATION_MS: Record<CareLevel, number> = {
+  low: 15000,
+  medium: 20000,
+  high: 28000,
+};
+export const PERFECT_STAY_MULTIPLIER = 0.75;

@@ -1,5 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Room, ValidationResult } from '../types/game';
 import { CARE_LEVEL_LABEL } from '../types/game';
 import { PatientCard } from './PatientCard';
@@ -149,9 +149,11 @@ export function RoomCell({
 
       {/* Occupants */}
       <div className="flex-1 flex flex-col gap-2">
-        {room.occupants.map((p) => (
-          <PatientCard key={p.id} patient={p} source={room.id} compact />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {room.occupants.map((p) => (
+            <PatientCard key={p.id} patient={p} source={room.id} compact />
+          ))}
+        </AnimatePresence>
         {Array.from({ length: emptySlots }).map((_, i) => (
           <div
             key={`empty-${i}`}
