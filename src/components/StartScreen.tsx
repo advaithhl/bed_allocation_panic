@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
-import { useGameStore } from '../engine/gameStore';
 import { Leaderboard } from './Leaderboard';
 import { useState } from 'react';
 import { FACILITY_NAMES } from '../data/names';
 
-export function StartScreen() {
-  const startGame = useGameStore((s) => s.startGame);
+interface Props {
+  onStart: () => void;
+}
+
+export function StartScreen({ onStart }: Props) {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   const facilityName =
@@ -48,7 +50,7 @@ export function StartScreen() {
 
         <div className="flex flex-col gap-3 items-center">
           <motion.button
-            onClick={startGame}
+            onClick={onStart}
             className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-colors text-lg"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

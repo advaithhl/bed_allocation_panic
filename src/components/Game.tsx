@@ -22,7 +22,6 @@ import { RoomGrid } from './RoomGrid';
 import { EventPopup } from './EventPopup';
 import { SlowMoOverlay } from './SlowMoOverlay';
 import { PhaseTransitionBanner } from './PhaseTransitionBanner';
-import { TutorialOverlay } from './TutorialOverlay';
 import { DragOverlayContent } from './DragOverlayContent';
 import { playPop, playBuzz, playSparkle, playWhoosh, playAlarm } from '../utils/sound';
 
@@ -46,7 +45,6 @@ export function Game() {
   const prevSlowMoActive = useRef(false);
   const prevEventCount = useRef(0);
 
-  // Sound effects for slow-mo activation and events
   useEffect(() => {
     if (slowMo.active && !prevSlowMoActive.current && soundEnabled) {
       playWhoosh();
@@ -116,7 +114,6 @@ export function Game() {
       if (room) {
         setDragOverRoomId(room.id);
 
-        // For room-to-room moves, temporarily remove patient from source room for validation
         let roomForValidation = room;
         if (activeDragSource && activeDragSource !== 'queue' && activeDragSource === room.id) {
           roomForValidation = {
@@ -146,7 +143,6 @@ export function Game() {
       const overId = event.over?.id as string | undefined;
 
       if (!overId) {
-        // Dropped outside — cancel
         setActiveDragPatient(null);
         setActiveDragSource(null);
         setDragOverRoomId(null);
@@ -154,13 +150,10 @@ export function Game() {
         return;
       }
 
-      // Room -> Queue
       if (overId === 'queue-drop-zone' && data.source !== 'queue') {
         unplacePatient(data.patientId, data.source);
         if (soundEnabled) playPop();
-      }
-      // Queue -> Room
-      else if (data.source === 'queue' && overId !== 'queue-drop-zone') {
+      } else if (data.source === 'queue' && overId !== 'queue-drop-zone') {
         const result = placePatient(data.patientId, overId);
         if (result.success) {
           if (soundEnabled) {
@@ -173,9 +166,7 @@ export function Game() {
         } else {
           if (soundEnabled) playBuzz();
         }
-      }
-      // Room -> Room
-      else if (data.source !== 'queue' && overId !== 'queue-drop-zone' && data.source !== overId) {
+      } else if (data.source !== 'queue' && overId !== 'queue-drop-zone' && data.source !== overId) {
         const success = movePatient(data.patientId, data.source, overId);
         if (success) {
           if (soundEnabled) playPop();
@@ -207,9 +198,9 @@ export function Game() {
       <div className="h-full flex flex-col overflow-hidden">
         <HUD />
 
-        <div className="flex-1 flex gap-3 p-3 min-h-0 overflow-hidden">
+        <div className="flex-1 flex gap-4 p-4 min-h-0 overflow-hidden">
           {/* Left: Queue */}
-          <div className="w-56 flex-shrink-0 overflow-auto">
+          <div className="w-72 flex-shrink-0 overflow-auto">
             <PatientQueue />
           </div>
 
@@ -227,7 +218,6 @@ export function Game() {
       <EventPopup />
       <SlowMoOverlay />
       <PhaseTransitionBanner />
-      <TutorialOverlay />
 
       {/* Drag overlay */}
       <DragOverlay dropAnimation={null}>

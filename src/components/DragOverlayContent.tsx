@@ -12,21 +12,33 @@ const CARE_COLORS = {
   high: 'border-red-400 bg-red-50',
 };
 
+const CARE_BADGES = {
+  low: 'bg-green-500 text-white',
+  medium: 'bg-amber-500 text-white',
+  high: 'bg-red-500 text-white',
+};
+
+const CARE_LABEL = { low: 'LOW', medium: 'MED', high: 'HIGH' };
+const GENDER_ICONS: Record<string, string> = { male: '♂', female: '♀' };
+
 export function DragOverlayContent({ patient, validation }: Props) {
   return (
     <div className="pointer-events-none">
       <div
         className={`
-          rounded-xl border-2 p-2.5 shadow-xl
+          rounded-xl border-2 p-3 shadow-xl
           ${CARE_COLORS[patient.careLevel]}
           ${patient.isEmergency ? 'ring-2 ring-red-500' : ''}
         `}
-        style={{ width: 180 }}
+        style={{ width: 220 }}
       >
-        <div className="flex items-center gap-1.5 mb-1">
-          <span className="text-xs font-semibold truncate">{patient.name}</span>
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CARE_BADGES[patient.careLevel]}`}>
+            {CARE_LABEL[patient.careLevel]}
+          </span>
+          <span className="text-sm font-bold truncate flex-1">{patient.name}</span>
+          <span className="text-lg">{GENDER_ICONS[patient.gender]}</span>
         </div>
-        <div className="text-[10px] text-slate-500">{patient.funTrait}</div>
       </div>
 
       <AnimatePresence>
@@ -35,14 +47,14 @@ export function DragOverlayContent({ patient, validation }: Props) {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="mt-1.5 flex flex-col gap-0.5"
+            className="mt-2 flex flex-col gap-1"
           >
             {validation.reasons.map((reason, i) => (
               <div
                 key={i}
-                className="flex items-center gap-1 bg-red-100 text-red-700 text-[10px] font-medium px-2 py-0.5 rounded-md"
+                className="flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-medium px-2.5 py-1 rounded-lg"
               >
-                <span>{reason.icon}</span>
+                <span className="text-sm">{reason.icon}</span>
                 <span>{reason.text}</span>
               </div>
             ))}

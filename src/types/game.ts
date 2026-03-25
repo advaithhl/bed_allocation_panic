@@ -12,6 +12,12 @@ export const CARE_LEVEL_RANK: Record<CareLevel, number> = {
   high: 3,
 };
 
+export const CARE_LEVEL_LABEL: Record<CareLevel, string> = {
+  low: 'Low',
+  medium: 'Med',
+  high: 'High',
+};
+
 export const PHASE_DISPLAY: Record<DifficultyPhase, string> = {
   calmShift: 'Calm Shift',
   busyHours: 'Busy Hours',
@@ -99,7 +105,7 @@ export interface PhaseTransitionEvent {
 
 export interface DragData {
   patientId: string;
-  source: 'queue' | string; // 'queue' or roomId
+  source: 'queue' | string;
 }
 
 export interface DifficultyConfig {
@@ -116,44 +122,44 @@ export interface DifficultyConfig {
 
 export const DIFFICULTY_CONFIGS: Record<DifficultyPhase, DifficultyConfig> = {
   calmShift: {
-    spawnIntervalMs: 3500,
-    spawnVarianceMs: 1000,
-    eventProbability: 0.02,
-    patientExpiryMs: 20000,
-    emergencyExpiryMs: 7000,
-    emergencyChance: 0.0,
-    highCareChance: 0.1,
-    isolationChance: 0.05,
-    equipmentChance: 0.1,
+    spawnIntervalMs: 5000,
+    spawnVarianceMs: 1500,
+    eventProbability: 0,
+    patientExpiryMs: 30000,
+    emergencyExpiryMs: 10000,
+    emergencyChance: 0,
+    highCareChance: 0,
+    isolationChance: 0,
+    equipmentChance: 0,
   },
   busyHours: {
-    spawnIntervalMs: 2500,
+    spawnIntervalMs: 3200,
     spawnVarianceMs: 800,
-    eventProbability: 0.04,
-    patientExpiryMs: 16000,
-    emergencyExpiryMs: 6000,
-    emergencyChance: 0.15,
-    highCareChance: 0.3,
-    isolationChance: 0.15,
-    equipmentChance: 0.25,
+    eventProbability: 0.03,
+    patientExpiryMs: 22000,
+    emergencyExpiryMs: 8000,
+    emergencyChance: 0.1,
+    highCareChance: 0.25,
+    isolationChance: 0.1,
+    equipmentChance: 0.15,
   },
   chaos: {
-    spawnIntervalMs: 1500,
+    spawnIntervalMs: 1800,
     spawnVarianceMs: 500,
-    eventProbability: 0.07,
-    patientExpiryMs: 12000,
-    emergencyExpiryMs: 5000,
-    emergencyChance: 0.25,
-    highCareChance: 0.4,
-    isolationChance: 0.2,
-    equipmentChance: 0.35,
+    eventProbability: 0.06,
+    patientExpiryMs: 14000,
+    emergencyExpiryMs: 6000,
+    emergencyChance: 0.2,
+    highCareChance: 0.35,
+    isolationChance: 0.18,
+    equipmentChance: 0.3,
   },
 };
 
 export const PHASE_THRESHOLDS: Record<DifficultyPhase, number> = {
   calmShift: 0,
-  busyHours: 60000,
-  chaos: 150000,
+  busyHours: 45000,
+  chaos: 120000,
 };
 
 export const MAX_MISSES = 3;

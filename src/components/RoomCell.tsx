@@ -1,6 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import { motion } from 'framer-motion';
 import type { Room, ValidationResult } from '../types/game';
+import { CARE_LEVEL_LABEL } from '../types/game';
 import { PatientCard } from './PatientCard';
 import { useGameStore } from '../engine/gameStore';
 
@@ -13,15 +14,27 @@ interface Props {
 }
 
 const CARE_BG = {
-  low: 'bg-green-50/50',
-  medium: 'bg-amber-50/50',
-  high: 'bg-red-50/50',
+  low: 'bg-green-50/60',
+  medium: 'bg-amber-50/60',
+  high: 'bg-red-50/60',
 };
 
 const CARE_BORDER = {
-  low: 'border-green-200',
-  medium: 'border-amber-200',
-  high: 'border-red-200',
+  low: 'border-green-300',
+  medium: 'border-amber-300',
+  high: 'border-red-300',
+};
+
+const CARE_BADGE = {
+  low: 'bg-green-500',
+  medium: 'bg-amber-500',
+  high: 'bg-red-500',
+};
+
+const GENDER_LABEL: Record<string, string> = {
+  male: '♂',
+  female: '♀',
+  mixed: '⚤',
 };
 
 export function RoomCell({
@@ -53,15 +66,17 @@ export function RoomCell({
     bgStyle = isValid ? 'bg-green-50' : 'bg-red-50';
   } else if (isSuggested) {
     borderStyle = 'border-cyan-400';
-    bgStyle = 'bg-cyan-50/50';
+    bgStyle = 'bg-cyan-50/60';
   }
+
+  const emptySlots = room.capacity - room.occupants.length;
 
   return (
     <motion.div
       ref={setNodeRef}
       className={`
-        relative rounded-xl border-2 p-2 transition-all min-h-[120px]
-        flex flex-col
+        relative rounded-2xl border-2 p-3 transition-all
+        flex flex-col h-full
         ${borderStyle} ${bgStyle}
         ${room.disabled ? 'opacity-60' : ''}
       `}
@@ -93,54 +108,70 @@ export function RoomCell({
       onMouseLeave={onHoverEnd}
     >
       {/* Room header */}
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-[10px] font-semibold text-slate-500 truncate flex-1">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-sm font-bold text-slate-700">
           {room.label}
         </span>
-        <div className="flex items-center gap-0.5 text-[10px] text-slate-400">
-          {room.isolationCapable && <span title="Isolation">🔒</span>}
+
+        <div className={`w-2 h-2 rounded-full ${CARE_BADGE[room.maxCareLevel]}`} />
+        <span className="text-xs text-slate-500 font-medium">
+          {CARE_LEVEL_LABEL[room.maxCareLevel]}
+        </span>
+
+        <div className="flex-1" />
+
+        <div className="flex items-center gap-1.5 text-base text-slate-400">
+          {room.isolationCapable && <span title="Isolation capable">🔒</span>}
           {room.equipmentAvailable !== 'none' && (
             <span title={room.equipmentAvailable}>
               {room.equipmentAvailable === 'oxygen' ? '🫁' : '🏥'}
             </span>
           )}
-          <span className="ml-0.5">
-            {room.genderPolicy === 'male' ? '♂' : room.genderPolicy === 'female' ? '♀' : '⚤'}
+          <span className="text-lg" title={`Gender: ${room.genderPolicy}`}>
+            {GENDER_LABEL[room.genderPolicy]}
           </span>
         </div>
       </div>
 
-      {/* Capacity dots */}
-      <div className="flex gap-1 mb-1.5">
+      {/* Capacity indicator */}
+      <div className="flex gap-1.5 mb-3">
         {Array.from({ length: room.capacity }).map((_, i) => (
           <div
             key={i}
-            className={`w-2 h-2 rounded-full ${
+            className={`w-3 h-3 rounded-full border-2 transition-colors ${
               i < room.occupants.length
-                ? 'bg-slate-400'
-                : 'bg-slate-200'
+                ? 'bg-slate-400 border-slate-400'
+                : 'bg-white border-slate-300'
             }`}
           />
         ))}
       </div>
 
       {/* Occupants */}
-      <div className="flex-1 flex flex-col gap-1">
+      <div className="flex-1 flex flex-col gap-2">
         {room.occupants.map((p) => (
           <PatientCard key={p.id} patient={p} source={room.id} compact />
         ))}
+        {Array.from({ length: emptySlots }).map((_, i) => (
+          <div
+            key={`empty-${i}`}
+            className="border-2 border-dashed border-slate-200 rounded-lg py-3 text-center text-xs text-slate-300 font-medium"
+          >
+            Empty bed
+          </div>
+        ))}
       </div>
 
-      {/* Room disabled overlay */}
+      {/* Disabled overlay */}
       {room.disabled && (
-        <div className="absolute inset-0 rounded-xl bg-slate-200/60 flex items-center justify-center">
-          <span className="text-2xl">🧹</span>
+        <div className="absolute inset-0 rounded-2xl bg-slate-200/70 flex items-center justify-center">
+          <span className="text-3xl">🧹</span>
         </div>
       )}
 
-      {/* Full indicator */}
+      {/* Full badge */}
       {isFull && !room.disabled && (
-        <div className="absolute top-1 right-1 text-[8px] bg-slate-500 text-white px-1 rounded">
+        <div className="absolute top-2 right-2 text-xs bg-slate-600 text-white px-2 py-0.5 rounded-md font-bold">
           FULL
         </div>
       )}
@@ -148,7 +179,7 @@ export function RoomCell({
       {/* Perfect placement burst */}
       {isPerfect && (
         <motion.div
-          className="absolute inset-0 rounded-xl pointer-events-none flex items-center justify-center"
+          className="absolute inset-0 rounded-2xl pointer-events-none flex items-center justify-center"
           initial={{ opacity: 1, scale: 0.5 }}
           animate={{ opacity: 0, scale: 2 }}
           transition={{ duration: 0.8 }}
@@ -156,7 +187,7 @@ export function RoomCell({
             useGameStore.getState().clearPerfectPlacement();
           }}
         >
-          <span className="text-lg font-black text-amber-500 drop-shadow-lg">
+          <span className="text-xl font-black text-amber-500 drop-shadow-lg">
             ★ PERFECT
           </span>
         </motion.div>

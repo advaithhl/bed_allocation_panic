@@ -49,6 +49,7 @@ export interface GameState {
   slowMo: SlowMoState;
 
   // UI state
+  paused: boolean;
   aiSuggestion: AISuggestion | null;
   perfectPlacement: PerfectPlacementEvent | null;
   phaseTransition: PhaseTransitionEvent | null;
@@ -76,6 +77,7 @@ export interface GameState {
   clearPerfectPlacement: () => void;
   clearPhaseTransition: () => void;
   toggleSound: () => void;
+  setPaused: (paused: boolean) => void;
 }
 
 const initialStats: GameStats = {
@@ -106,6 +108,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   slowMo: { active: false, endsAtGameTime: 0, cooldownUntilGameTime: 0 },
 
+  paused: false,
   aiSuggestion: null,
   perfectPlacement: null,
   phaseTransition: null,
@@ -131,6 +134,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       combo: 0,
       stats: { ...initialStats },
       slowMo: { active: false, endsAtGameTime: 0, cooldownUntilGameTime: 0 },
+      paused: false,
       aiSuggestion: null,
       perfectPlacement: null,
       phaseTransition: null,
@@ -143,7 +147,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   tick: (gameDeltaMs: number) => {
     const state = get();
-    if (state.phase !== 'playing') return;
+    if (state.phase !== 'playing' || state.paused) return;
 
     const newClock = state.gameClock + gameDeltaMs;
     const config = DIFFICULTY_CONFIGS[state.difficultyPhase];
@@ -487,4 +491,5 @@ export const useGameStore = create<GameState>((set, get) => ({
   clearPerfectPlacement: () => set({ perfectPlacement: null }),
   clearPhaseTransition: () => set({ phaseTransition: null }),
   toggleSound: () => set({ soundEnabled: !get().soundEnabled }),
+  setPaused: (paused: boolean) => set({ paused }),
 }));

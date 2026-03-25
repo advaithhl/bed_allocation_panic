@@ -17,16 +17,18 @@ export function PatientQueue() {
     <div
       ref={setNodeRef}
       className={`
-        flex flex-col gap-2 p-3 rounded-2xl transition-colors min-h-0
-        ${isOver ? 'bg-blue-50 ring-2 ring-blue-300' : 'bg-white/50'}
+        flex flex-col gap-3 p-4 rounded-2xl transition-colors h-full
+        ${isOver ? 'bg-blue-50 ring-2 ring-blue-300' : 'bg-white/60'}
       `}
     >
-      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+      <div className="text-sm font-bold text-slate-600 uppercase tracking-wider flex items-center justify-between">
         <span>Waiting Room</span>
-        <span className="text-slate-400">{queue.length}</span>
+        <span className="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-full">
+          {queue.length}
+        </span>
       </div>
 
-      <div className="flex flex-col gap-1.5 flex-1 overflow-hidden">
+      <div className="flex flex-col gap-2.5 flex-1 overflow-hidden">
         <AnimatePresence mode="popLayout">
           {visible.map((patient) => (
             <PatientCard
@@ -38,13 +40,13 @@ export function PatientQueue() {
         </AnimatePresence>
 
         {overflow > 0 && (
-          <div className="text-center text-xs text-slate-400 font-semibold py-1 bg-slate-100 rounded-lg">
+          <div className="text-center text-sm text-slate-400 font-semibold py-2 bg-slate-100 rounded-xl">
             +{overflow} more waiting...
           </div>
         )}
 
         {queue.length === 0 && (
-          <div className="text-center text-xs text-slate-300 py-8">
+          <div className="text-center text-sm text-slate-300 py-10 font-medium">
             All clear!
           </div>
         )}

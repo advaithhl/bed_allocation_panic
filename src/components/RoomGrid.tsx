@@ -27,7 +27,7 @@ export function RoomGrid({ dragOverRoomId, roomValidations }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2 flex-1">
+      <div className="grid grid-cols-2 gap-4 h-full">
         {rooms.map((room) => (
           <RoomCell
             key={room.id}

@@ -1,17 +1,19 @@
 export const PATIENT_FIRST_NAMES = [
-  'Gerald', 'Blanket Hog', 'Nurse-Call', 'Midnight Snacker',
-  'Snoring', 'Grumpy', 'Sleepy', 'Pillow-Fluffer',
+  'Gerald', 'Blanket Hog', 'Nurse-Call', 'Midnight',
+  'Snoring', 'Grumpy', 'Sleepy', 'Pillow',
   'Button-Masher', 'Wandering', 'Chatty', 'Napping',
-  'Jello-Lover', 'Remote-Hogger', 'Early Bird', 'Drama Queen',
+  'Jello-Lover', 'Remote-Hogger', 'Early Bird', 'Drama',
   'Hallway', 'Buzzer', 'Pudding', 'Slippers',
+  'Halfway', 'Beezer', 'Cranky', 'Whisper',
 ];
 
 export const PATIENT_LAST_NAMES = [
-  'McSnoreson', 'Barbara', 'Ned', 'Mia',
+  'McSneezin', 'Barbara', 'Ned', 'Mia',
   'Steve', 'Thompson', 'Wigglesworth', 'Bumblesnoot',
   'McGee', 'O\'Napper', 'Dozer', 'Blanketini',
-  'Fussbudget', 'Restwell', 'Snuggins', 'Pillowsworth',
-  'Bedsore', 'Nightcap', 'Recliner', 'Yawnston',
+  'Funkbudget', 'Restwell', 'Snuggins', 'Pillowsworth',
+  'Bastwail', 'Nightcap', 'Recliner', 'Yawnston',
+  'McHuffin', 'Bedsworth', 'Napsworth', 'Slumberton',
 ];
 
 export const FUN_TRAITS = [
@@ -30,18 +32,12 @@ export const FUN_TRAITS = [
 ];
 
 export const ROOM_LABELS = [
-  'The Snore Zone',
-  'Room of Requirements',
-  'VIP Lounge',
-  'Pillow Fort',
-  'The Quiet Corner',
-  'Chaos Ward',
-  'Blanket Bunker',
-  'Nap HQ',
-  'The Recovery Lounge',
-  'Snooze Central',
-  'Rest Stop',
-  'Dreamland Suite',
+  'Ward A',
+  'Ward B',
+  'Bay C',
+  'Suite D',
+  'Bay E',
+  'Suite F',
 ];
 
 export const AI_QUIPS = {

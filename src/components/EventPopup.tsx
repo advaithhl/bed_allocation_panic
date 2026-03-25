@@ -5,13 +5,12 @@ export function EventPopup() {
   const activeEvents = useGameStore((s) => s.activeEvents);
   const gameClock = useGameStore((s) => s.gameClock);
 
-  // Show only the two most recent, still-active events
   const recentEvents = activeEvents
     .filter((e) => gameClock - e.startedAtGameTime < 4000)
     .slice(-2);
 
   return (
-    <div className="fixed top-16 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-2 pointer-events-none">
+    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-2.5 pointer-events-none">
       <AnimatePresence>
         {recentEvents.map((event) => (
           <motion.div
@@ -21,8 +20,8 @@ export function EventPopup() {
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className={`
-              px-4 py-2 rounded-xl shadow-lg backdrop-blur-sm text-sm font-semibold
-              max-w-md text-center
+              px-5 py-2.5 rounded-xl shadow-lg backdrop-blur-sm text-sm font-bold
+              max-w-lg text-center
               ${event.type === 'emergency'
                 ? 'bg-red-500/90 text-white'
                 : event.type === 'inspection'

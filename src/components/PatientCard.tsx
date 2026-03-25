@@ -16,10 +16,12 @@ const CARE_COLORS = {
 };
 
 const CARE_BADGES = {
-  low: 'bg-green-400',
-  medium: 'bg-amber-400',
-  high: 'bg-red-400',
+  low: 'bg-green-500 text-white',
+  medium: 'bg-amber-500 text-white',
+  high: 'bg-red-500 text-white',
 };
+
+const CARE_LABEL = { low: 'LOW', medium: 'MED', high: 'HIGH' };
 
 const GENDER_ICONS: Record<string, string> = {
   male: '♂',
@@ -58,14 +60,17 @@ export function PatientCard({ patient, source, compact }: Props) {
         {...attributes}
         {...listeners}
         className={`
-          text-xs px-1.5 py-1 rounded border cursor-grab active:cursor-grabbing select-none
-          flex items-center gap-1
+          text-sm px-2.5 py-1.5 rounded-lg border-2 cursor-grab active:cursor-grabbing select-none
+          flex items-center gap-2
           ${CARE_COLORS[patient.careLevel]}
           ${isDragging ? 'opacity-40' : 'hover:shadow-sm'}
         `}
       >
-        <span className="truncate flex-1">{patient.name.split(' ').slice(0, 2).join(' ')}</span>
-        <span className="text-[10px] opacity-60">{GENDER_ICONS[patient.gender]}</span>
+        <span className="truncate flex-1 font-medium">{patient.name.split(' ').slice(0, 2).join(' ')}</span>
+        <span className="text-base opacity-70">{GENDER_ICONS[patient.gender]}</span>
+        <span className={`text-xs font-mono tabular-nums ${isUrgent ? 'text-red-600 font-bold' : 'text-slate-400'}`}>
+          {timeLeftSec}s
+        </span>
       </div>
     );
   }
@@ -78,10 +83,10 @@ export function PatientCard({ patient, source, compact }: Props) {
       {...listeners}
       className={`
         relative cursor-grab active:cursor-grabbing select-none
-        rounded-xl border-2 p-2.5 shadow-sm transition-shadow
+        rounded-xl border-2 p-3 shadow-sm transition-shadow
         ${CARE_COLORS[patient.careLevel]}
         ${isDragging ? 'opacity-40 shadow-lg' : 'hover:shadow-md'}
-        ${patient.isEmergency ? 'ring-2 ring-red-500 ring-offset-1' : ''}
+        ${patient.isEmergency ? 'ring-2 ring-red-500 ring-offset-2' : ''}
         ${isUrgent && !patient.isEmergency ? 'animate-pressure-pulse' : ''}
       `}
       layout
@@ -92,29 +97,31 @@ export function PatientCard({ patient, source, compact }: Props) {
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
     >
       {patient.isEmergency && (
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+        <div className="absolute -top-2.5 -right-2.5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
           SOS
         </div>
       )}
 
-      <div className="flex items-center gap-1.5 mb-1">
-        <div className={`w-2 h-2 rounded-full ${CARE_BADGES[patient.careLevel]}`} />
-        <span className="text-xs font-semibold truncate flex-1">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CARE_BADGES[patient.careLevel]}`}>
+          {CARE_LABEL[patient.careLevel]}
+        </span>
+        <span className="text-sm font-bold truncate flex-1 text-slate-800">
           {patient.name}
         </span>
-        <span className="text-sm">{GENDER_ICONS[patient.gender]}</span>
+        <span className="text-lg">{GENDER_ICONS[patient.gender]}</span>
       </div>
 
-      <div className="flex items-center gap-1 text-[10px] text-slate-500">
-        {patient.isolationRequired && <span title="Isolation">🔒</span>}
-        {EQUIP_ICONS[patient.equipment] && (
-          <span title={patient.equipment}>{EQUIP_ICONS[patient.equipment]}</span>
-        )}
-        <span className="truncate opacity-70">{patient.funTrait}</span>
-      </div>
-
-      <div className={`mt-1 text-[10px] font-mono ${isUrgent ? 'text-red-600 font-bold' : 'text-slate-400'}`}>
-        {timeLeftSec}s
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-sm text-slate-400">
+          {patient.isolationRequired && <span title="Needs isolation">🔒</span>}
+          {EQUIP_ICONS[patient.equipment] && (
+            <span title={patient.equipment}>{EQUIP_ICONS[patient.equipment]}</span>
+          )}
+        </div>
+        <div className={`text-sm font-mono font-bold tabular-nums ${isUrgent ? 'text-red-600' : 'text-slate-500'}`}>
+          {timeLeftSec}s
+        </div>
       </div>
     </motion.div>
   );

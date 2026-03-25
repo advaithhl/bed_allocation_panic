@@ -20,15 +20,12 @@ export function HUD() {
 
   const phaseColor =
     difficultyPhase === 'calmShift'
-      ? 'text-green-600'
+      ? 'text-green-600 bg-green-50'
       : difficultyPhase === 'busyHours'
-        ? 'text-amber-600'
-        : 'text-red-600';
+        ? 'text-amber-600 bg-amber-50'
+        : 'text-red-600 bg-red-50';
 
-  const cooldownRemaining = Math.max(
-    0,
-    slowMo.cooldownUntilGameTime - gameClock,
-  );
+  const cooldownRemaining = Math.max(0, slowMo.cooldownUntilGameTime - gameClock);
   const cooldownFraction = slowMo.active
     ? 1
     : cooldownRemaining > 0
@@ -37,15 +34,15 @@ export function HUD() {
   const slowMoReady = !slowMo.active && cooldownRemaining <= 0;
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 bg-white/80 backdrop-blur-sm border-b border-slate-200 shadow-sm">
+    <div className="flex items-center justify-between px-6 py-3 bg-white/90 backdrop-blur-sm border-b border-slate-200 shadow-sm">
       {/* Left: Score + Combo */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5">
         <div>
-          <div className="text-xs text-slate-400 uppercase tracking-wider">Score</div>
+          <div className="text-xs text-slate-400 uppercase tracking-wider font-medium">Score</div>
           <motion.div
             key={score}
-            className="text-xl font-black text-slate-800 tabular-nums"
-            initial={{ scale: 1.2 }}
+            className="text-2xl font-black text-slate-800 tabular-nums"
+            initial={{ scale: 1.15 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 500 }}
           >
@@ -59,8 +56,8 @@ export function HUD() {
             animate={{ scale: 1 }}
             className="flex flex-col items-center"
           >
-            <div className="text-xs text-slate-400">Combo</div>
-            <div className={`text-lg font-black ${combo >= COMBO_CAP ? 'text-purple-600' : 'text-indigo-600'}`}>
+            <div className="text-xs text-slate-400 font-medium">Combo</div>
+            <div className={`text-xl font-black ${combo >= COMBO_CAP ? 'text-purple-600' : 'text-indigo-600'}`}>
               x{Math.min(combo + 1, COMBO_CAP)}
             </div>
           </motion.div>
@@ -68,21 +65,21 @@ export function HUD() {
       </div>
 
       {/* Center: Phase + Timer */}
-      <div className="flex flex-col items-center">
-        <div className={`text-sm font-bold uppercase tracking-wide ${phaseColor}`}>
+      <div className="flex flex-col items-center gap-0.5">
+        <div className={`text-sm font-bold uppercase tracking-wide px-3 py-0.5 rounded-full ${phaseColor}`}>
           {PHASE_DISPLAY[difficultyPhase]}
         </div>
-        <div className="text-xs text-slate-400 tabular-nums">
+        <div className="text-lg text-slate-600 tabular-nums font-mono font-bold">
           {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
         </div>
       </div>
 
       {/* Right: Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {/* Misses */}
-        <div className="flex gap-0.5">
+        <div className="flex gap-1">
           {Array.from({ length: MAX_MISSES }).map((_, i) => (
-            <span key={i} className={`text-lg ${i < missCount ? 'opacity-30' : ''}`}>
+            <span key={i} className={`text-xl transition-opacity ${i < missCount ? 'opacity-25' : ''}`}>
               {i < missCount ? '🖤' : '❤️'}
             </span>
           ))}
@@ -93,7 +90,7 @@ export function HUD() {
           onClick={() => useGameStore.getState().activateSlowMo()}
           disabled={!slowMoReady}
           className={`
-            relative w-9 h-9 rounded-full border-2 flex items-center justify-center text-sm
+            relative w-10 h-10 rounded-full border-2 flex items-center justify-center text-base
             transition-all
             ${slowMoReady
               ? 'border-indigo-400 bg-indigo-50 hover:bg-indigo-100 cursor-pointer'
@@ -132,18 +129,18 @@ export function HUD() {
                 requestAISuggestion();
               }
             }}
-            className="px-2.5 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-semibold hover:bg-violet-200 transition-colors"
+            className="px-3 py-2 rounded-lg bg-violet-100 text-violet-700 text-sm font-semibold hover:bg-violet-200 transition-colors"
           >
-            🤖 Suggest
+            🤖 Hint
           </button>
           {aiSuggestion && (
             <motion.div
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-2 text-xs text-slate-600 w-44 z-50"
+              className="absolute top-full right-0 mt-1.5 bg-white rounded-xl shadow-lg border border-slate-200 p-3 text-sm text-slate-600 w-52 z-50"
             >
               <span className="italic">"{aiSuggestion.message}"</span>
-              <div className="mt-1 text-[10px] text-slate-400">
+              <div className="mt-1.5 text-xs text-slate-400">
                 Confidence: {aiSuggestion.confidence}
               </div>
             </motion.div>
@@ -153,7 +150,7 @@ export function HUD() {
         {/* Sound */}
         <button
           onClick={toggleSound}
-          className="text-lg hover:scale-110 transition-transform"
+          className="text-xl hover:scale-110 transition-transform"
           title="Toggle Sound"
         >
           {soundEnabled ? '🔊' : '🔇'}
