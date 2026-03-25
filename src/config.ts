@@ -11,7 +11,6 @@ import type {
   DifficultyPhase,
   Equipment,
   EventType,
-  GenderPolicy,
   RoomTemplate,
 } from './types/game';
 
