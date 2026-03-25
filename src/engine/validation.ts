@@ -1,5 +1,5 @@
 import type { Patient, Room, ValidationResult } from '../types/game';
-import { CARE_LEVEL_RANK } from '../types/game';
+import { CARE_LEVEL_RANK, EQUIPMENT_RANK } from '../config';
 
 export function validatePlacement(patient: Patient, room: Room): ValidationResult {
   const reasons: ValidationResult['reasons'] = [];
@@ -40,8 +40,7 @@ export function validatePlacement(patient: Patient, room: Room): ValidationResul
   }
 
   if (patient.equipment !== 'none') {
-    const equipRank: Record<string, number> = { none: 0, oxygen: 1, intensive: 2 };
-    if (equipRank[room.equipmentAvailable] < equipRank[patient.equipment]) {
+    if (EQUIPMENT_RANK[room.equipmentAvailable] < EQUIPMENT_RANK[patient.equipment]) {
       reasons.push({ text: 'Equipment unavailable', icon: '🩺' });
     }
   }

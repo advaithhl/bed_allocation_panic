@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { motion } from 'framer-motion';
 import type { Patient, DragData } from '../types/game';
-import { STAY_DURATION_MS } from '../types/game';
+import { STAY_DURATION_MS, URGENT_TIMER_MS } from '../config';
 import { useGameStore } from '../engine/gameStore';
 
 interface Props {
@@ -57,7 +57,7 @@ export function PatientCard({ patient, source, compact }: Props) {
 
   const timeLeft = Math.max(0, patient.expiresAtGameTime - gameClock);
   const timeLeftSec = Math.ceil(timeLeft / 1000);
-  const isUrgent = timeLeft < 5000;
+  const isUrgent = timeLeft < URGENT_TIMER_MS;
 
   if (compact) {
     const isPlaced = patient.dischargeAtGameTime > 0;

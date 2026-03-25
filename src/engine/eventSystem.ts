@@ -1,5 +1,6 @@
 import type { EventType, GameEvent, Room, Patient } from '../types/game';
 import { EVENT_TEXTS } from '../data/names';
+import { EVENT_DURATION_MS } from '../config';
 
 let eventId = 1;
 
@@ -41,7 +42,7 @@ export function generateEvent(
         id,
         type: 'emergency',
         displayText: `🚨 Emergency! ${pick(EVENT_TEXTS.emergency)}`,
-        durationMs: 5000,
+        durationMs: EVENT_DURATION_MS.emergency,
         startedAtGameTime: gameClock,
         affectedEntityId: null,
       };
@@ -52,7 +53,7 @@ export function generateEvent(
         id,
         type: 'cleaning',
         displayText: `🧹 ${room.label}: ${pick(EVENT_TEXTS.cleaning)}`,
-        durationMs: 10000,
+        durationMs: EVENT_DURATION_MS.cleaning,
         startedAtGameTime: gameClock,
         affectedEntityId: room.id,
       };
@@ -68,7 +69,7 @@ export function generateEvent(
         id,
         type: 'worsened',
         displayText: `⚠️ ${patient.name}: ${pick(EVENT_TEXTS.worsened)}`,
-        durationMs: 8000,
+        durationMs: EVENT_DURATION_MS.worsened,
         startedAtGameTime: gameClock,
         affectedEntityId: patient.id,
       };
@@ -79,7 +80,7 @@ export function generateEvent(
         id,
         type: 'inspection',
         displayText: `🔍 ${pick(EVENT_TEXTS.inspection)}`,
-        durationMs: 15000,
+        durationMs: EVENT_DURATION_MS.inspection,
         startedAtGameTime: gameClock,
         affectedEntityId: null,
       };

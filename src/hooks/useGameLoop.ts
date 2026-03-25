@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGameStore } from '../engine/gameStore';
+import { FRAME_CAP_MS } from '../config';
 
 export function useGameLoop() {
   const phase = useGameStore((s) => s.phase);
@@ -21,7 +22,7 @@ export function useGameLoop() {
         return;
       }
 
-      const realDeltaMs = Math.min(now - lastRealTimeRef.current, 100);
+      const realDeltaMs = Math.min(now - lastRealTimeRef.current, FRAME_CAP_MS);
       lastRealTimeRef.current = now;
 
       const gameDeltaMs = realDeltaMs * timeScale;

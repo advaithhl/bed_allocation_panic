@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../engine/gameStore';
-import { PHASE_DISPLAY } from '../types/game';
+import { PHASE_DISPLAY, LEADERBOARD_MAX_ENTRIES, SHIFT_OVER_SCORE_HIGH, SHIFT_OVER_SCORE_MEDIUM } from '../config';
 import { SHIFT_OVER_MESSAGES } from '../data/names';
 import { useEffect } from 'react';
 
@@ -22,7 +22,7 @@ function saveToLeaderboard(score: number) {
   board.sort((a, b) => b.score - a.score);
   localStorage.setItem(
     'bedpanic_leaderboard',
-    JSON.stringify(board.slice(0, 10)),
+    JSON.stringify(board.slice(0, LEADERBOARD_MAX_ENTRIES)),
   );
 }
 
@@ -37,9 +37,9 @@ export function ShiftOverScreen() {
   }, [score]);
 
   const messagePool =
-    score >= 3000
+    score >= SHIFT_OVER_SCORE_HIGH
       ? SHIFT_OVER_MESSAGES.high
-      : score >= 1000
+      : score >= SHIFT_OVER_SCORE_MEDIUM
         ? SHIFT_OVER_MESSAGES.medium
         : SHIFT_OVER_MESSAGES.low;
   const personalityMessage = pick(messagePool);

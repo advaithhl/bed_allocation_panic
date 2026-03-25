@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Room } from '../types/game';
-import { CARE_LEVEL_LABEL } from '../types/game';
+import { CARE_LEVEL_LABEL } from '../config';
 
 interface Props {
   room: Room | null;

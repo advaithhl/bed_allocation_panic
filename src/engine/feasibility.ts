@@ -1,9 +1,6 @@
 import type { Patient, Room } from '../types/game';
 import { validatePlacement } from './validation';
-
-export const SPAWN_LOOKAHEAD_MS = 10000;
-export const MAX_SPAWN_RETRIES = 5;
-export const SPAWN_RETRY_DELAY_MS = 1000;
+import { SPAWN_LOOKAHEAD_MS } from '../config';
 
 /**
  * Projects what a room will look like at a future time by removing

@@ -1,13 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../engine/gameStore';
+import { EVENT_POPUP_DURATION_MS, MAX_EVENT_POPUPS } from '../config';
 
 export function EventPopup() {
   const activeEvents = useGameStore((s) => s.activeEvents);
   const gameClock = useGameStore((s) => s.gameClock);
 
   const recentEvents = activeEvents
-    .filter((e) => gameClock - e.startedAtGameTime < 4000)
-    .slice(-2);
+    .filter((e) => gameClock - e.startedAtGameTime < EVENT_POPUP_DURATION_MS)
+    .slice(-MAX_EVENT_POPUPS);
 
   return (
     <div className="fixed top-20 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-2.5 pointer-events-none">

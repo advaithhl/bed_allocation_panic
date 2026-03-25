@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Room, ValidationResult } from '../types/game';
-import { CARE_LEVEL_LABEL } from '../types/game';
+import { CARE_LEVEL_LABEL } from '../config';
 import { PatientCard } from './PatientCard';
 import { useGameStore } from '../engine/gameStore';
 

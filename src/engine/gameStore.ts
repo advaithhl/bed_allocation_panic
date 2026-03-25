@@ -22,14 +22,19 @@ import {
   SLOW_MO_TIME_SCALE,
   STAY_DURATION_MS,
   PERFECT_STAY_MULTIPLIER,
-} from '../types/game';
+  MAX_SPAWN_RETRIES,
+  SPAWN_RETRY_DELAY_MS,
+  EVENT_MIN_COOLDOWN_MS,
+  INVALID_PLACEMENT_PENALTY,
+  INSPECTION_PENALTY_MULTIPLIER,
+} from '../config';
 import { createRooms } from './roomSetup';
 import { generatePatient, resetPatientIdCounter } from './patientGenerator';
 import { generateEvent, resetEventIdCounter } from './eventSystem';
 import { validatePlacement } from './validation';
 import { calculatePlacementScore } from './scoreManager';
 import { getSuggestion } from './aiSuggestion';
-import { isFeasibleSpawn, canPlaceNow, MAX_SPAWN_RETRIES, SPAWN_RETRY_DELAY_MS } from './feasibility';
+import { isFeasibleSpawn, canPlaceNow } from './feasibility';
 
 export interface GameState {
   // Core state
@@ -279,7 +284,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (
       gamePhase === 'playing' &&
       Math.random() < config.eventProbability &&
-      newClock - lastEventGameTime >= 8000
+      newClock - lastEventGameTime >= EVENT_MIN_COOLDOWN_MS
     ) {
       const event = generateEvent(newClock, rooms, queue);
       if (event) {
@@ -400,7 +405,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     const validation = validatePlacement(patient, room);
     if (!validation.valid) {
       // Penalty for invalid placement attempt
-      const penalty = state.inspectionActive ? 100 : 50;
+      const penalty = state.inspectionActive
+        ? INVALID_PLACEMENT_PENALTY * INSPECTION_PENALTY_MULTIPLIER
+        : INVALID_PLACEMENT_PENALTY;
       set({
         score: Math.max(0, state.score - penalty),
         combo: 0,

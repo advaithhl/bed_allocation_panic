@@ -24,6 +24,7 @@ import { SlowMoOverlay } from './SlowMoOverlay';
 import { PhaseTransitionBanner } from './PhaseTransitionBanner';
 import { DragOverlayContent } from './DragOverlayContent';
 import { playPop, playBuzz, playSparkle, playWhoosh, playAlarm, playDischarge } from '../utils/sound';
+import { DRAG_ACTIVATION_DISTANCE } from '../config';
 
 export function Game() {
   useGameLoop();
@@ -74,7 +75,7 @@ export function Game() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
+      activationConstraint: { distance: DRAG_ACTIVATION_DISTANCE },
     }),
   );
 

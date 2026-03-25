@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { PatientCard } from './PatientCard';
 import { PressureBar } from './PressureBar';
 import { useGameStore } from '../engine/gameStore';
-import { MAX_VISIBLE_QUEUE } from '../types/game';
+import { MAX_VISIBLE_QUEUE } from '../config';
 
 export function PatientQueue() {
   const queue = useGameStore((s) => s.queue);

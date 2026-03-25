@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../engine/gameStore';
-import { MAX_MISSES, PHASE_DISPLAY, SLOW_MO_COOLDOWN_MS, COMBO_CAP } from '../types/game';
+import { MAX_MISSES, PHASE_DISPLAY, SLOW_MO_COOLDOWN_MS, COMBO_CAP } from '../config';
 
 export function HUD() {
   const score = useGameStore((s) => s.score);

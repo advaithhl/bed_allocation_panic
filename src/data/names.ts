@@ -31,15 +31,6 @@ export const FUN_TRAITS = [
   { text: 'Sock Stealer', icon: '🧦' },
 ];
 
-export const ROOM_LABELS = [
-  'Ward A',
-  'Ward B',
-  'Bay C',
-  'Suite D',
-  'Bay E',
-  'Suite F',
-];
-
 export const AI_QUIPS = {
   high: [
     'Trust me on this one.',

@@ -1,5 +1,6 @@
 import type { CareLevel, DifficultyConfig, Equipment, Gender, Patient } from '../types/game';
 import { PATIENT_FIRST_NAMES, PATIENT_LAST_NAMES, FUN_TRAITS } from '../data/names';
+import { GENDER_SPLIT, MEDIUM_CARE_BAND, EQUIPMENT_OXYGEN_CHANCE } from '../config';
 
 let nextId = 1;
 
@@ -17,7 +18,7 @@ export function generatePatient(
 ): Patient {
   const id = `patient-${nextId++}`;
   const name = `${pick(PATIENT_FIRST_NAMES)} ${pick(PATIENT_LAST_NAMES)}`;
-  const gender: Gender = Math.random() < 0.5 ? 'male' : 'female';
+  const gender: Gender = Math.random() < GENDER_SPLIT ? 'male' : 'female';
   const trait = pick(FUN_TRAITS);
 
   const isEmergency = Math.random() < config.emergencyChance;
@@ -26,7 +27,7 @@ export function generatePatient(
   const r = Math.random();
   if (r < config.highCareChance) {
     careLevel = 'high';
-  } else if (r < config.highCareChance + 0.3) {
+  } else if (r < config.highCareChance + MEDIUM_CARE_BAND) {
     careLevel = 'medium';
   }
 
@@ -34,7 +35,7 @@ export function generatePatient(
 
   let equipment: Equipment = 'none';
   if (Math.random() < config.equipmentChance) {
-    equipment = Math.random() < 0.6 ? 'oxygen' : 'intensive';
+    equipment = Math.random() < EQUIPMENT_OXYGEN_CHANCE ? 'oxygen' : 'intensive';
   }
 
   const expiryMs = isEmergency ? config.emergencyExpiryMs : config.patientExpiryMs;

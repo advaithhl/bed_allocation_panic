@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../engine/gameStore';
-import { PHASE_DISPLAY } from '../types/game';
+import { PHASE_DISPLAY, PHASE_BANNER_DURATION_MS } from '../config';
 import { useEffect, useState } from 'react';
 
 export function PhaseTransitionBanner() {
@@ -14,7 +14,7 @@ export function PhaseTransitionBanner() {
       const timer = setTimeout(() => {
         setVisible(false);
         clearPhaseTransition();
-      }, 2500);
+      }, PHASE_BANNER_DURATION_MS);
       return () => clearTimeout(timer);
     }
   }, [phaseTransition, clearPhaseTransition]);

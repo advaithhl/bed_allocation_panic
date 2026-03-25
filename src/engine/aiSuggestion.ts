@@ -1,6 +1,7 @@
 import type { AISuggestion, Patient, Room } from '../types/game';
 import { validatePlacement } from './validation';
 import { AI_QUIPS } from '../data/names';
+import { AI_HIGH_CONFIDENCE, AI_MEDIUM_CONFIDENCE } from '../config';
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -21,7 +22,7 @@ export function getSuggestion(
 
   const roll = Math.random();
 
-  if (roll < 0.55 && validRooms.length > 0) {
+  if (roll < AI_HIGH_CONFIDENCE && validRooms.length > 0) {
     // Best valid room (prefer exact care level match and least occupied)
     const sorted = [...validRooms].sort((a, b) => {
       const aOcc = a.occupants.length;
@@ -35,7 +36,7 @@ export function getSuggestion(
     };
   }
 
-  if (roll < 0.85 && validRooms.length > 0) {
+  if (roll < AI_MEDIUM_CONFIDENCE && validRooms.length > 0) {
     // Suboptimal but valid
     const room = pick(validRooms);
     return {
