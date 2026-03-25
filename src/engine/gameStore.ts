@@ -29,6 +29,7 @@ import { generateEvent, resetEventIdCounter } from './eventSystem';
 import { validatePlacement } from './validation';
 import { calculatePlacementScore } from './scoreManager';
 import { getSuggestion } from './aiSuggestion';
+import { isFeasibleSpawn, canPlaceNow, MAX_SPAWN_RETRIES, SPAWN_RETRY_DELAY_MS } from './feasibility';
 
 export interface GameState {
   // Core state
@@ -171,7 +172,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     // --- Slow-mo check ---
     let timeScale = state.timeScale;
-    let slowMo = { ...state.slowMo };
+    const slowMo = { ...state.slowMo };
     if (slowMo.active && newClock >= slowMo.endsAtGameTime) {
       slowMo.active = false;
       timeScale = 1;
@@ -248,16 +249,26 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
-    // --- Spawn patients ---
+    // --- Spawn patients (feasibility-gated) ---
     let lastSpawnGameTime = state.lastSpawnGameTime;
     let totalSpawned = state.stats.totalSpawned;
     const spawnInterval =
       config.spawnIntervalMs + (Math.random() - 0.5) * config.spawnVarianceMs;
     if (newClock - lastSpawnGameTime >= spawnInterval && gamePhase === 'playing') {
-      const newPatient = generatePatient(newClock, config);
-      queue.push(newPatient);
-      lastSpawnGameTime = newClock;
-      totalSpawned++;
+      let spawned = false;
+      for (let attempt = 0; attempt < MAX_SPAWN_RETRIES; attempt++) {
+        const candidate = generatePatient(newClock, config);
+        if (isFeasibleSpawn(candidate, rooms, newClock)) {
+          queue.push(candidate);
+          lastSpawnGameTime = newClock;
+          totalSpawned++;
+          spawned = true;
+          break;
+        }
+      }
+      if (!spawned) {
+        lastSpawnGameTime = newClock - spawnInterval + SPAWN_RETRY_DELAY_MS;
+      }
     }
 
     // --- Trigger events ---
@@ -337,8 +348,10 @@ export const useGameStore = create<GameState>((set, get) => ({
             ...config,
             emergencyChance: 1,
           });
-          newQueue = [...newQueue, emergencyPatient];
-          totalSpawned++;
+          if (canPlaceNow(emergencyPatient, newRooms)) {
+            newQueue = [...newQueue, emergencyPatient];
+            totalSpawned++;
+          }
         }
       }
     }
